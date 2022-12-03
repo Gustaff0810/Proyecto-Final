@@ -1,0 +1,161 @@
+//Hecho Por Gustavo Maneiro. CI: 30.540.327
+
+Program CajeroAutomatico;
+
+
+Type //aca registro acerca de los usuarios
+  NumUsers = Record
+    Nombre, Apellidos : String;
+    Dinero : longint;
+  End;
+  //Aca se encuentra el array del nro de usuarios
+
+  SpacioUser = array[1..100] Of NumUsers;
+
+
+Var 
+  //Array acerca del numero disponibles de retiro
+  Montos : Array[1..5] Of integer;
+  // Variable del Array
+  User : SpacioUser;
+  valor, Identificador, Num : integer;
+  acaparador : string;
+  // aca el formato para poder registrar cedulas
+  Cedula, NuevaCedula: longint;
+  Dinero: longint;
+Procedure DatosdelUser();
+//aqui el proceso para la obtencion de los datos del usuario
+Begin
+
+
+  Begin
+    With User[1] Do
+      Begin
+        Writeln();
+
+        Writeln('Coloque Su Nombre: ');
+        Readln(Nombre);
+        Writeln('Ingrese un monto: ');
+        Readln(Dinero);
+        Writeln('Coloque Su Apellido: ');
+        Readln(Apellidos);
+
+
+      End;
+  End;
+End;
+Procedure Archivo();
+//Aca se escribe el codigo en un archivo tipo .txt
+
+Var 
+  Archivo: text;
+  CODIGO: String;
+
+Begin
+  assign(Archivo, 'TRANSACCIONES.TXT' );
+  reset(Archivo);
+  While Not eof(Archivo) Do
+    Begin
+      readln(Archivo, CODIGO);
+      writeln(CODIGO);
+    End;
+  close(Archivo);
+
+End;
+
+Procedure Inicio();
+Begin
+  Writeln();
+  Writeln(' ');
+  Writeln('Ingrese su cedula');
+  Writeln('Para realizar las operaciones bancarias');
+  Repeat
+    Writeln();
+    Write('Cedula: ');
+    Readln(acaparador);
+    Val(acaparador, Cedula, Identificador);
+  Until Identificador=0;
+
+End;
+Procedure Menu();
+//aca encontramos el proceso de seleccion de Opcion
+
+Begin
+  Repeat
+    //Validacion de tipo repeat
+    Repeat
+      Writeln();
+      Writeln('Que operacion desea realizar');
+      Writeln('Presione 1 Para realizar un retiro de su cuenta');
+      Writeln('Presione 2 Consultar su dinero');
+      Writeln('Presione 3 Realizar Un deposito a otra cuenta');
+      Writeln('Presione 4 Salir del cajero');
+
+      Readln(acaparador);
+      //aca encontramos la Validacion Numerica
+      Val(acaparador, valor, Identificador);
+
+    Until Identificador=0;
+
+    Case valor Of 
+      1:
+         Begin
+           //tenemos el proceso para el retirado de saldo
+
+           Writeln('Elija Una Opcion ');
+           Writeln('1 para retirar 1$, 2 para retirar-2$, 3 para retirar-5$, 4 para retirar-20$, 5 para retirar-50$');
+           Writeln('Ingrese el monto');
+           Readln(Num);
+           Montos[1] := 1;
+           Montos[2] := 2;
+           Montos[3] := 1;
+           Montos[4] := 20;
+           Montos[5] := 50;
+           User[1].Dinero := User[1].Dinero - Montos[Num];
+           Writeln(User[1].Dinero);
+         End;
+
+      2:
+         Begin
+           //a su vez el proceso de consulta de saldo
+           Writeln('Consulta de monto');
+           Writeln('monto:  ',User[1].Dinero );
+         End;
+
+      3:
+         Begin
+           If User[1].Dinero <= 0 Then //Identificador de saldo
+             Begin
+               Writeln();
+               Writeln('Su Dinero no alcanza');
+             End
+           Else
+             Begin
+               Writeln('Usted va a realizar un deposito');
+               Writeln('Su cedula Es: ',Cedula );
+               Writeln('De la cedula de a quien va a depositar');
+               Readln(NuevaCedula);
+               Writeln('monto');
+               Readln(Dinero);
+               User[1].Dinero := User[1].Dinero - Dinero;
+               Writeln('Usted A Transferido : ',Dinero );
+             End;
+
+         End;
+
+
+      4: Writeln('Fin del Sistema');
+    End;
+  Until valor=4;
+End;
+
+
+Begin
+  //Aca tenemos al cuerpo principal del programa
+  Inicio();
+  Writeln('Su Identificativo Es: ',Cedula);
+  DatosdelUser();
+  Menu();
+  Archivo();
+
+End.
